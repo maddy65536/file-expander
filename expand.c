@@ -24,11 +24,37 @@ char unexpandChar(char *input) {
 }
 
 int expandFile(char *input, char *output) {
+    // debug
     printf("expanding:\ninput: %s\noutput: %s\n", input, output);
     
+    // open input file and ensure it was opened, return 1 to indicate an error
+    FILE *inputFile = fopen(input, "rb");
+    if (inputFile == NULL) {
+        printf("failed to open input file: %s\n", input);
+        return 1;
+    }
+
+    // open output file and ensure it was opened, return 1 to indicate an error
+    FILE *outputFile = fopen(output, "wb");
+    if (outputFile == NULL) {
+        // close input file since we're aborting
+        fclose(inputFile);
+        printf("failed to open output file: %s\n", output);
+        return 1;
+    }
+    
+    // buffers to hold character read from file and its expanded version
+    char res;
     char expanded[8];
-    expandChar(input[0], expanded);
-    printf("expanded: %s\n", expanded);
+    // read each byte from the input file, expand it, and write to output file
+    while (fread(&res, 1, 1, inputFile)) {
+        expandChar(res, expanded);
+        fwrite(expanded, 1, 8, outputFile);
+    }
+
+    fclose(inputFile);
+    fclose(outputFile);
+
     return 0;
 }
 
