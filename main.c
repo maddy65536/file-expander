@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     } else {
         int res = unexpandFile(inputPath, outputPath);
         if (res != 0) {
-            return 0;
+            return 1;
         }
     }
 
