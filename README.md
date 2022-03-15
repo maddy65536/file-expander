@@ -1,7 +1,7 @@
 # file-expander
 ever wanted a file to be 8x bigger? no? well too bad! 
 
-`file-expander` makes files 8x bigger and restore a file it made bigger to its original state
+`file-expander` makes files 8x bigger and can restore them to their original state
 
 ## building
 to build  on linux simply run:
