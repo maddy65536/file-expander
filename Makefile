@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -O3
 
 file-expander: main.c expand.c expand.h
 	$(CC) $(CFLAGS) -o file-expander main.c expand.c
