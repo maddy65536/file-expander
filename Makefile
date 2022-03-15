@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall
 
-file-expander:
+file-expander: main.c
 	$(CC) $(CFLAGS) -o file-expander main.c
 
 clean:
