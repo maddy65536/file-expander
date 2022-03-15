@@ -43,17 +43,17 @@ int main(int argc, char *argv[]) {
 
     // ensure arguments are valid
     if (expandMode == None) {
-        printf("error: must set a mode\n");
+        fprintf(stderr, "error: must set a mode\n");
         return 1;
     }
 
     if (inputPath == NULL) {
-        printf("error: must supply an input file\n");
+        fprintf(stderr, "error: must supply an input file\n");
         return 1;
     }
 
     if (outputPath == NULL) {
-        printf("error: must supply an output file\n");
+        fprintf(stderr, "error: must supply an output file\n");
         return 1;
     }
 

@@ -40,7 +40,7 @@ int expandFile(char *input, char *output) {
     // open input file and ensure it was opened, return 1 to indicate an error
     FILE *inputFile = fopen(input, "rb");
     if (inputFile == NULL) {
-        printf("failed to open input file: %s\n", input);
+        fprintf(stderr, "failed to open input file: %s\n", input);
         return 1;
     }
 
@@ -49,7 +49,7 @@ int expandFile(char *input, char *output) {
     if (outputFile == NULL) {
         // close input file since we're aborting
         fclose(inputFile);
-        printf("failed to open output file: %s\n", output);
+        fprintf(stderr, "failed to open output file: %s\n", output);
         return 1;
     }
     
@@ -75,7 +75,7 @@ int unexpandFile(char *input, char *output) {
     // open input file and ensure it was opened, return 1 to indicate an error
     FILE *inputFile = fopen(input, "rb");
     if (inputFile == NULL) {
-        printf("failed to open input file: %s\n", input);
+        fprintf(stderr, "failed to open input file: %s\n", input);
         return 1;
     }
 
@@ -84,7 +84,7 @@ int unexpandFile(char *input, char *output) {
     if (outputFile == NULL) {
         // close input file since we're aborting
         fclose(inputFile);
-        printf("failed to open output file: %s\n", output);
+        fprintf(stderr, "failed to open output file: %s\n", output);
         return 1;
     }
     
@@ -96,7 +96,7 @@ int unexpandFile(char *input, char *output) {
     while((numRead = fread(&expanded, 1, 8, inputFile))) {
         // ensure read string is correctly formatted
         if (numRead < 8 || !checkFormat(expanded)) {
-            printf("incorrect file format, aborting");
+            fprintf(stderr, "incorrect file format, aborting");
             return 1;
         }
         char res = unexpandChar(expanded);
