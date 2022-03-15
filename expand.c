@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 // requires an 8 byte buffer
-void expandChar(char input, char *outputBuf) {
+static void expandChar(char input, char *outputBuf) {
     for (int i = 0; i < 8; i++) {
         if ((input >> (7 - i)) & 1) {
             outputBuf[i] = '1';
@@ -12,7 +12,7 @@ void expandChar(char input, char *outputBuf) {
 }
 
 // assumes that input is correctly formatted (8 byte char array, only 0 and 1)
-char unexpandChar(char *input) {
+static char unexpandChar(char *input) {
     char res = 0;
     for (int i = 0; i < 8; i++) {
         res <<= 1;
@@ -24,7 +24,7 @@ char unexpandChar(char *input) {
 }
 
 // checks if a string is all 0 and 1, assumes length 8
-int checkFormat(char* input) {
+static int checkFormat(char* input) {
     for (int i = 0; i < 8; i++) {
         if (input[i] != '0' && input[i] != '1') {
             return 0;
