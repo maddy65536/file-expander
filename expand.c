@@ -4,9 +4,9 @@
 static void expandChar(char input, char *outputBuf) {
     for (int i = 0; i < 8; i++) {
         if ((input >> (7 - i)) & 1) {
-            outputBuf[i] = '1';
+            outputBuf[i] = '\xff';
         } else {
-            outputBuf[i] = '0';
+            outputBuf[i] = '\x00';
         }
     }
 }
@@ -16,7 +16,7 @@ static char unexpandChar(char *input) {
     char res = 0;
     for (int i = 0; i < 8; i++) {
         res <<= 1;
-        if (input[i] == '1') {
+        if (input[i] == '\xff') {
             res |= 1;
         }
     }
@@ -26,7 +26,7 @@ static char unexpandChar(char *input) {
 // checks if a string is all 0 and 1, assumes length 8
 static int checkFormat(char* input) {
     for (int i = 0; i < 8; i++) {
-        if (input[i] != '0' && input[i] != '1') {
+        if (input[i] != '\x00' && input[i] != '\xff') {
             return 0;
         }
     }
