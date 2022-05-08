@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+#define SMALL_CHUNK_SIZE 128 * (1024 * 1024) // 128 MiB read at once
+#define BIG_CHUNK_SIZE 8 * SMALL_CHUNK_SIZE
 
 // requires an 8 byte buffer
 static void expandChar(char input, char *outputBuf) {
@@ -52,15 +56,41 @@ int expandFile(char *input, char *output) {
         fprintf(stderr, "failed to open output file: %s\n", output);
         return 1;
     }
-    
-    // buffers to hold character read from file and its expanded version
-    char readChar;
-    char expanded[8];
-    // read each byte from the input file, expand it, and write to output file
-    while (fread(&readChar, 1, 1, inputFile)) {
-        expandChar(readChar, expanded);
-        fwrite(expanded, 1, 8, outputFile);
+
+    // allocate buffers to hold input and output while expanding it
+    char* inputBuf = malloc(SMALL_CHUNK_SIZE);
+    if (inputBuf == NULL) {
+        fclose(inputFile);
+        fclose(outputFile);
+        fprintf(stderr, "failed to allocate memory");
     }
+
+    char* outputBuf = malloc(BIG_CHUNK_SIZE);
+    if (outputBuf == NULL) {
+        fclose(inputFile);
+        fclose(outputFile);
+        free(inputBuf);
+        fprintf(stderr, "failed to allocate memory");
+    }
+    
+    // get size of input file
+    fseek(inputFile, 0L, SEEK_END);
+    size_t inputSize = ftell(inputFile);
+    rewind(inputFile);
+
+    // read file chunk by chunk
+    size_t numRead;
+    while ((numRead = fread(inputBuf, sizeof(char), SMALL_CHUNK_SIZE, inputFile))) {
+        // expand chunk into output buffer        
+        for (size_t pos = 0; pos < numRead; pos++) {
+            expandChar(inputBuf[pos], outputBuf + (pos * 8));
+        }
+        // write chunk to output file
+        fwrite(outputBuf, sizeof(char) * 8, numRead, outputFile);
+    }
+
+    free(inputBuf);
+    free(outputBuf);
 
     fclose(inputFile);
     fclose(outputFile);
