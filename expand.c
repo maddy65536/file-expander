@@ -113,20 +113,47 @@ int unexpandFile(char *input, char *output) {
         return 1;
     }
     
-    // buffers to hold string read from file and the character it represents 
-    char expanded[8]; 
-    size_t numRead;
-    // read file, 8 characters at a time,
-    // and write the unexpanded characters to the output file 
-    while((numRead = fread(&expanded, 1, 8, inputFile))) {
-        // ensure read string is correctly formatted
-        if (numRead < 8 || !checkFormat(expanded)) {
-            fprintf(stderr, "incorrect file format, aborting");
-            return 1;
-        }
-        char res = unexpandChar(expanded);
-        fwrite(&res, 1, 1, outputFile);
+    // allocate buffers to hold input and output while expanding it
+    char* inputBuf = malloc(BIG_CHUNK_SIZE);
+    if (inputBuf == NULL) {
+        fclose(inputFile);
+        fclose(outputFile);
+        fprintf(stderr, "failed to allocate memory");
     }
+
+    char* outputBuf = malloc(SMALL_CHUNK_SIZE);
+    if (outputBuf == NULL) {
+        fclose(inputFile);
+        fclose(outputFile);
+        free(inputBuf);
+        fprintf(stderr, "failed to allocate memory");
+    }
+
+    // read file chunk by chunk
+    size_t numRead;
+    while ((numRead = fread(inputBuf, sizeof(char) * 8, SMALL_CHUNK_SIZE, inputFile))) {
+        // unexpand chunk into output buffer
+        for (size_t pos = 0; pos < SMALL_CHUNK_SIZE; pos++) {
+            // check for format errors
+            if (!checkFormat(inputBuf + (pos * 8))) {
+                // clean up
+                free(inputBuf);
+                free(outputBuf);
+                fclose(inputFile);
+                fclose(outputFile);
+
+                fprintf(stderr, "incorrect file format, aborting");
+                return 1;
+            }
+            // unexpand one part of the chunk
+            outputBuf[pos] = unexpandChar(inputBuf + (pos * 8));
+        }
+        // write chunk
+        fwrite(outputBuf, sizeof(char), numRead, outputFile);
+    }
+
+    free(inputBuf);
+    free(outputBuf);
 
     fclose(inputFile);
     fclose(outputFile);
