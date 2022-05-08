@@ -72,11 +72,6 @@ int expandFile(char *input, char *output) {
         free(inputBuf);
         fprintf(stderr, "failed to allocate memory");
     }
-    
-    // get size of input file
-    fseek(inputFile, 0L, SEEK_END);
-    size_t inputSize = ftell(inputFile);
-    rewind(inputFile);
 
     // read file chunk by chunk
     size_t numRead;
